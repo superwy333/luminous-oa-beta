@@ -11,6 +11,8 @@ server:
 
 
 spring:
+    thymeleaf:
+      prefix: classpath:/templates/
     activiti:
       check-process-definitions: false
       #每次应用启动不检查Activiti数据表是否存在及版本号是否匹配，提升应用启动速度
