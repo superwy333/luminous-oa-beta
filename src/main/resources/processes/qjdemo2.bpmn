@@ -3,7 +3,7 @@
   <process id="myProcess_1" isClosed="false" isExecutable="true" processType="None">
     <startEvent id="_2" name="StartEvent"/>
     <userTask activiti:exclusive="true" id="_3" name="申请"/>
-    <userTask activiti:exclusive="true" id="_4" name="科室"/>
+    <userTask activiti:assignee="${assignee}" activiti:exclusive="true" id="_4" name="科室"/>
     <userTask activiti:exclusive="true" id="_5" name="部门"/>
     <userTask activiti:exclusive="true" id="_6" name="分管领导"/>
     <userTask activiti:exclusive="true" id="_7" name="行政人事部"/>
