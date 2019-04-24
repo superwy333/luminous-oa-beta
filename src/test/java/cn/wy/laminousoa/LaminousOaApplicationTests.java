@@ -46,7 +46,7 @@ public class LaminousOaApplicationTests {
     public void deploy() {
         processEngine.getRepositoryService()
                 .createDeployment()
-                .addClasspathResource("processes/demo3.bpmn")
+                .addClasspathResource("processes/qjdemo2.bpmn")
                 .deploy();
     }
 
@@ -56,7 +56,7 @@ public class LaminousOaApplicationTests {
     @Test
     public void delete() {
         processEngine.getRepositoryService()
-                .deleteDeployment("40001",true);
+                .deleteDeployment("20001",true);
     }
 
     /**
@@ -75,7 +75,7 @@ public class LaminousOaApplicationTests {
      */
     @Test
     public void completeTask() {
-        processEngine.getTaskService().complete("62506");
+        processEngine.getTaskService().complete("1");
 
     }
 
@@ -86,9 +86,9 @@ public class LaminousOaApplicationTests {
     @Test
     public void completeTask2() {
         Map<String,Object> variables = new HashMap<>();
-        variables.put("days",1);
-        variables.put("result","pass");
-        processEngine.getTaskService().complete("65002",variables);
+        variables.put("post","zy");
+        variables.put("days",18);
+        processEngine.getTaskService().complete("55004",variables);
 
     }
 
