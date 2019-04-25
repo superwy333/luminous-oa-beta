@@ -6,7 +6,8 @@ server:
         min-spare-threads: 30
     port: 8080
     connection-timeout: 5000
-    context-path: /laminousoa
+#    context-path: /laminousoa
+    context-path: /
 
 
 
