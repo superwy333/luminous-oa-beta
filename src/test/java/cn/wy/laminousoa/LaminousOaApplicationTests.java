@@ -1,6 +1,9 @@
 package cn.wy.laminousoa;
 
 import org.activiti.engine.*;
+import org.activiti.engine.repository.Deployment;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +11,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -46,17 +55,37 @@ public class LaminousOaApplicationTests {
     public void deploy() {
         processEngine.getRepositoryService()
                 .createDeployment()
-                .addClasspathResource("processes/qjdemo2.bpmn")
+                .addClasspathResource("processes/test-process-01.bpmn20.xml")
                 .deploy();
     }
+
+    @Test
+    public void deployWithZip() {
+        InputStream in=this.getClass().getClassLoader().getSystemResourceAsStream("processes/qjlc.zip");
+        ZipInputStream zipInputStream=new ZipInputStream(in);
+        Deployment deployment=processEngine.getRepositoryService()
+                .createDeployment().addZipInputStream(zipInputStream)
+                .name("请假流程WithZip")
+                .deploy();
+        System.out.println("流程部署ID:"+deployment.getId());
+        System.out.println("流程部署Name:"+deployment.getName());
+
+    }
+
+
 
     /**
      * 删除已经部署的流程
      */
     @Test
     public void delete() {
-        processEngine.getRepositoryService()
-                .deleteDeployment("60001",true);
+        String[] ids = {"277501","277531","302501"};
+        for (int i =0;i<ids.length;i++) {
+            processEngine.getRepositoryService()
+                    .deleteDeployment(ids[i],true);
+        }
+
+
     }
 
     /**
@@ -65,8 +94,10 @@ public class LaminousOaApplicationTests {
     @Test
     public void start() {
         System.out.println("【Before】Number of process instances: " + runtimeService.createProcessInstanceQuery().count());
+        Map<String,Object> variables = new HashMap<>();
+        variables.put("assignee","aaa");
         processEngine.getRuntimeService()
-                .startProcessInstanceByKey("myProcess_1"); // 流程实例id传act_re_procdef.KEY
+                .startProcessInstanceByKey("test-process-01",variables); // 流程实例id传act_re_procdef.KEY
         System.out.println("【After】Number of process instances: " + runtimeService.createProcessInstanceQuery().count());
     }
 
@@ -75,7 +106,7 @@ public class LaminousOaApplicationTests {
      */
     @Test
     public void completeTask() {
-        processEngine.getTaskService().complete("1");
+        processEngine.getTaskService().complete("85007");
 
     }
 
@@ -98,6 +129,38 @@ public class LaminousOaApplicationTests {
     }
 
 
+    @Test
+    public void viewPic() throws IOException {
+        /**将生成图片放到文件夹下*/
+        String deploymentId = "77501";
+        //获取图片资源名称
+        List<String> list = processEngine.getRepositoryService()//
+                .getDeploymentResourceNames(deploymentId);
+        //定义图片资源的名称
+        String resourceName = "";
+        if(list!=null && list.size()>0){
+            for(String name:list){
+                if(name.indexOf(".png")>=0){
+                    resourceName = name;
+                }
+            }
+        }
+
+
+        //获取图片的输入流
+        InputStream in = processEngine.getRepositoryService()//
+                .getResourceAsStream(deploymentId, resourceName);
+
+        //将图片生成到D盘的目录下
+        File file = new File("D:/"+resourceName);
+        //将输入流的图片写到D盘下
+        FileUtils.copyInputStreamToFile(in, file);
+    }
+
+
+
+
+
 
     @Test
     public void contextLoads() {
@@ -105,5 +168,7 @@ public class LaminousOaApplicationTests {
         System.out.println(taskService);
 
     }
+
+
 
 }
